@@ -10,6 +10,7 @@ enum class Tile {
     GROUND,
     TREE,
     GRASS,
+    CITY,
     CAT,
     QUEEN,
     PATH_CROSS,
