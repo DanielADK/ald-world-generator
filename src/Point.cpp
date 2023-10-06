@@ -6,7 +6,7 @@
  * @param x The x-coordinate.
  * @param y The y-coordinate.
  */
-Point::Point(int x, int y) : x(x), y(y) {}
+Point::Point(int x, int y) : x(x), y(y), cost(std::numeric_limits<double>::infinity()) {}
 
 /**
  * @brief Calculates the Euclidean distance to another point.
@@ -27,7 +27,9 @@ double Point::distanceTo(const Point& other) const {
     return x * 31 + y;
 }
 
-std::size_t std::hash<Point>::operator()(const Point& point) const {
-    return point.hashValue();
-}
+template<> struct std::hash<Point> {
+    std::size_t operator()(const Point& point) const {
+        return point.hashValue();
+    }
+};
 

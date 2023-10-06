@@ -1,27 +1,24 @@
+#include <unordered_set>
 #include <queue>
-#include <unordered_map>
-#include <map>
-#include <set>
+#include <memory>
 #include "Map.h"
+#include "Point.h"
 
-Map::Map(int rows, int cols, Tile defaultTile) : m_Rows(rows), m_Cols(cols) {
-    m_Grid.resize(rows, std::vector<Tile>(cols, defaultTile));
-
-    // Random device generator
-    std::random_device rd;
-    gen = std::mt19937(rd());
+Map::Map(int rows, int cols, Tile defaultTile) : rows(rows), cols(cols) {
+    m_Map.resize(rows, std::vector<Tile>(cols, defaultTile));
 }
 
 void Map::setTile(int x, int y, Tile tile) {
-    if (x >= 0 && x < m_Rows && y >= 0 && y < m_Cols) m_Grid[x][y] = tile;
+    if (x >= 0 && x < rows && y >= 0 && y < cols) m_Map[x][y] = tile;
 }
 
 Tile Map::getTile(int x, int y) const {
-    return (x >= 0 && x < m_Rows && y >= 0 && y < m_Cols) ? m_Grid[x][y] : Tile::ERROR;
+    return (x >= 0 && x < rows && y >= 0 && y < cols) ? m_Map[x][y] : Tile::ERROR;
 }
 
 void Map::printMap() const {
-    for (const auto& row : m_Grid) {
+    setlocale(LC_ALL, "");
+    for (const auto& row : m_Map) {
         for (const auto& tile : row) {
             switch (tile) {
                 case Tile::GROUND:
@@ -34,7 +31,7 @@ void Map::printMap() const {
                     std::cout << '.';
                     break;
                 case Tile::PATH_CROSS:
-                    std::cout << "█";
+                    std::cout << '+';
                     break;
                 case Tile::PATH_ENDDOWN:
                     std::cout << 'V';
@@ -55,7 +52,7 @@ void Map::printMap() const {
                     std::cout << '-';
                     break;
                 case Tile::CITY:
-                    std::cout << 'H';
+                    std::cout << 'C';
                     break;
             }
         }
@@ -63,23 +60,59 @@ void Map::printMap() const {
     }
 }
 
-void Map::generateCities(int numCities) {
-    std::uniform_int_distribution<> disRow(0, m_Rows-1);
-    std::uniform_int_distribution<> disCol(0, m_Cols-1);
+struct Node {
+    Point point;
+    int distance;
+    Node(Point p, int d) : point(p), distance(d) {}
+};
 
-    for (int i = 0; i < numCities; ++i) {
-        int x = disRow(gen);
-        int y = disCol(gen);
-        m_Grid[x][y] = Tile::CITY;
-        m_Cities.emplace_back(x,y);
+struct CompareNode {
+    bool operator()(Node const& n1, Node const& n2) const {
+        return n1.distance > n2.distance;
     }
-}
-void Map::generatePaths() {
-    for (const auto& start : m_Cities) {
-        for (const auto& end : m_Cities) {
-            if (start != end) {
-                dijkstraPath(start.first, start.second, end.first, end.second);
+};
+
+void Map::generateRandomPaths(Point start, Point end) {
+    std::priority_queue<Node, std::vector<Node>, CompareNode> pq;
+    std::vector<std::vector<int>> distances(rows, std::vector<int>(cols, INT_MAX));
+    std::vector<std::vector<Point>> previous(rows, std::vector<Point>(cols, {-1, -1}));
+
+    pq.emplace(start, 0);
+    distances[start.x][start.y] = 0;
+
+    while (!pq.empty()) {
+        Node current = pq.top();
+        pq.pop();
+
+        if (current.point.x == end.x && current.point.y == end.y) {
+            break;
+        }
+
+        std::vector<Point> neighbors = {
+            {current.point.x + 1, current.point.y},
+            {current.point.x - 1, current.point.y},
+            {current.point.x, current.point.y + 1},
+            {current.point.x, current.point.y - 1}
+        };
+
+        for (auto& neighbor : neighbors) {
+            if (neighbor.x >= 0 && neighbor.x < rows && neighbor.y >= 0 && neighbor.y < cols) {
+                int newDist = distances[current.point.x][current.point.y] + 1; // Assuming all edges have weight=1
+                if (newDist < distances[neighbor.x][neighbor.y]) {
+                    pq.emplace(neighbor, newDist);
+                    distances[neighbor.x][neighbor.y] = newDist;
+                    previous[neighbor.x][neighbor.y] = current.point;
+                }
             }
         }
     }
+
+    // Trace back the path
+    Point p = end;
+    while (previous[p.x][p.y].x != -1) {
+        setTile(p.x, p.y, Tile::PATH_CROSS);
+        p = previous[p.x][p.y];
+    }
+    setTile(start.x, start.y, Tile::PATH_CROSS);
+    setTile(end.x, end.y, Tile::PATH_CROSS);
 }

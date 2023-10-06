@@ -7,16 +7,19 @@
 
 #include <cmath>
 #include <functional>
+#include <compare>
 
 /**
  * @class Point
  * @brief A class to represent a 2D point with integer coordinates.
  */
 class Point {
-private:
+public:
     int x;
     int y;
-public:
+    double cost;
+
+    Point(const Point& other) = default;
 
     /**
      * @brief Constructor to initialize point coordinates.
@@ -38,21 +41,17 @@ public:
      */
     size_t hashValue() const;
 
-    /**
-     * @brief Overloaded equality operator.
-     * @param other The other point to compare with.
-     * @return True if both points have the same coordinates, false otherwise.
-     */
-    bool operator==(const Point& other) const = default;
+    bool operator<(const Point& other) const {
+        if (x < other.x) return true;
+        if (x > other.x) return false;
+        return y < other.y;
+    }
+
+    bool operator==(const Point& other) const {
+        return x == other.x && y == other.y;
+    }
 };
 
-/**
- * @brief Hash function to enable the use of Point in some STL containers.
- */
-template <>
-struct std::hash<Point> {
-    std::size_t operator()(const Point& point) const;
-};
 
 
 
