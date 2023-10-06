@@ -4,16 +4,24 @@
 #include "Map.h"
 #include "Point.h"
 
-Map::Map(int rows, int cols, Tile defaultTile) : rows(rows), cols(cols) {
+Map::Map(int rows, int cols, Tile defaultTile) : m_Rows(rows), m_Cols(cols) {
     m_Map.resize(rows, std::vector<Tile>(cols, defaultTile));
 }
 
 void Map::setTile(int x, int y, Tile tile) {
-    if (x >= 0 && x < rows && y >= 0 && y < cols) m_Map[x][y] = tile;
+    if (x >= 0 && x < m_Rows && y >= 0 && y < m_Cols) m_Map[x][y] = tile;
 }
 
 Tile Map::getTile(int x, int y) const {
-    return (x >= 0 && x < rows && y >= 0 && y < cols) ? m_Map[x][y] : Tile::ERROR;
+    return (x >= 0 && x < m_Rows && y >= 0 && y < m_Cols) ? m_Map[x][y] : Tile::ERROR;
+}
+
+int Map::getRows() const {
+    return m_Rows;
+}
+
+int Map::getCols() const {
+    return m_Cols;
 }
 
 void Map::printMap() const {
@@ -74,8 +82,8 @@ struct CompareNode {
 
 void Map::generateRandomPaths(Point start, Point end) {
     std::priority_queue<Node, std::vector<Node>, CompareNode> pq;
-    std::vector<std::vector<int>> distances(rows, std::vector<int>(cols, INT_MAX));
-    std::vector<std::vector<Point>> previous(rows, std::vector<Point>(cols, {-1, -1}));
+    std::vector<std::vector<int>> distances(m_Rows, std::vector<int>(m_Cols, INT_MAX));
+    std::vector<std::vector<Point>> previous(m_Rows, std::vector<Point>(m_Cols, {-1, -1}));
 
     pq.emplace(start, 0);
     distances[start.x][start.y] = 0;
@@ -96,7 +104,7 @@ void Map::generateRandomPaths(Point start, Point end) {
         };
 
         for (auto& neighbor : neighbors) {
-            if (neighbor.x >= 0 && neighbor.x < rows && neighbor.y >= 0 && neighbor.y < cols) {
+            if (neighbor.x >= 0 && neighbor.x < m_Rows && neighbor.y >= 0 && neighbor.y < m_Cols) {
                 int newDist = distances[current.point.x][current.point.y] + 1; // Assuming all edges have weight=1
                 if (newDist < distances[neighbor.x][neighbor.y]) {
                     pq.emplace(neighbor, newDist);
