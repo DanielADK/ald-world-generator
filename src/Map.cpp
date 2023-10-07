@@ -4,57 +4,54 @@
 #include <set>
 #include "Map.h"
 
-Map::Map(int rows, int cols, Tile defaultTile) : m_Rows(rows), m_Cols(cols) {
-    m_Grid.resize(rows, std::vector<Tile>(cols, defaultTile));
-
-    // Random device generator
-    std::random_device rd;
-    gen = std::mt19937(rd());
+Map::Map(int rows, int cols, CTile defaultTile) : m_Rows(rows), m_Cols(cols) {
+    m_Grid.resize(rows, std::vector<CTile>(cols, defaultTile));
 }
 
-void Map::setTile(int x, int y, Tile tile) {
+void Map::setTile(int x, int y, CTile& tile) {
     if (x >= 0 && x < m_Rows && y >= 0 && y < m_Cols) m_Grid[x][y] = tile;
 }
 
-Tile Map::getTile(int x, int y) const {
-    return (x >= 0 && x < m_Rows && y >= 0 && y < m_Cols) ? m_Grid[x][y] : Tile::ERROR;
+CTile Map::getTile(int x, int y) const {
+    return (x >= 0 && x < m_Rows && y >= 0 && y < m_Cols) ? m_Grid[x][y] : CTile(ETile::ERROR, "data/img/error.png");
 }
 
+/*
 void Map::printMap() const {
     for (const auto& row : m_Grid) {
         for (const auto& tile : row) {
             switch (tile) {
-                case Tile::GROUND:
+                case ETile::GROUND:
                     std::cout << ' ';
                     break;
-                case Tile::TREE:
+                case ETile::TREE:
                     std::cout << '#';
                     break;
-                case Tile::GRASS:
+                case ETile::GRASS:
                     std::cout << '.';
                     break;
-                case Tile::PATH_CROSS:
+                case ETile::PATH_CROSS:
                     std::cout << "█";
                     break;
-                case Tile::PATH_ENDDOWN:
+                case ETile::PATH_ENDDOWN:
                     std::cout << 'V';
                     break;
-                case Tile::PATH_ENDLEFT:
+                case ETile::PATH_ENDLEFT:
                     std::cout << '>';
                     break;
-                case Tile::PATH_ENDRIGHT:
+                case ETile::PATH_ENDRIGHT:
                     std::cout << '<';
                     break;
-                case Tile::PATH_ENDUP:
+                case ETile::PATH_ENDUP:
                     std::cout << '^';
                     break;
-                case Tile::PATH_UPDOWN:
+                case ETile::PATH_UPDOWN:
                     std::cout << '|';
                     break;
-                case Tile::PATH_RIGHTLEFT:
+                case ETile::PATH_RIGHTLEFT:
                     std::cout << '-';
                     break;
-                case Tile::CITY:
+                case ETile::CITY:
                     std::cout << 'H';
                     break;
             }
@@ -62,4 +59,5 @@ void Map::printMap() const {
         std::cout << std::endl;
     }
 }
+ */
 
