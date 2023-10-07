@@ -49,8 +49,7 @@ public:
 /**
  * @brief Hash function to enable the use of Point in some STL containers.
  */
-template <>
-struct std::hash<Point> {
+template <> struct std::hash<Point> {
     std::size_t operator()(const Point& point) const;
 };
 

@@ -63,23 +63,3 @@ void Map::printMap() const {
     }
 }
 
-void Map::generateCities(int numCities) {
-    std::uniform_int_distribution<> disRow(0, m_Rows-1);
-    std::uniform_int_distribution<> disCol(0, m_Cols-1);
-
-    for (int i = 0; i < numCities; ++i) {
-        int x = disRow(gen);
-        int y = disCol(gen);
-        m_Grid[x][y] = Tile::CITY;
-        m_Cities.emplace_back(x,y);
-    }
-}
-void Map::generatePaths() {
-    for (const auto& start : m_Cities) {
-        for (const auto& end : m_Cities) {
-            if (start != end) {
-                dijkstraPath(start.first, start.second, end.first, end.second);
-            }
-        }
-    }
-}
