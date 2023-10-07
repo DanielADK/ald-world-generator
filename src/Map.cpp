@@ -8,12 +8,20 @@ Map::Map(int rows, int cols, Tile defaultTile) : m_Rows(rows), m_Cols(cols) {
     m_Map.resize(rows, std::vector<Tile>(cols, defaultTile));
 }
 
-void Map::setTile(int x, int y, Tile tile) {
+void Map::setTile(const int& x, const int& y, const Tile& tile) {
     if (x >= 0 && x < m_Rows && y >= 0 && y < m_Cols) m_Map[x][y] = tile;
 }
 
-Tile Map::getTile(int x, int y) const {
+void Map::setTile(const Point& point, const Tile& tile) {
+    setTile(point.x, point.y, tile);
+}
+
+Tile Map::getTile(const int& x, const int& y) const {
     return (x >= 0 && x < m_Rows && y >= 0 && y < m_Cols) ? m_Map[x][y] : Tile::ERROR;
+}
+
+Tile Map::getTile(const Point& point) const {
+    return getTile(point.x, point.y);
 }
 
 int Map::getRows() const {
@@ -80,7 +88,7 @@ struct CompareNode {
     }
 };
 
-void Map::generateRandomPaths(Point start, Point end) {
+void Map::generateRandomPaths(Point& start, Point& end) {
     std::priority_queue<Node, std::vector<Node>, CompareNode> pq;
     std::vector<std::vector<int>> distances(m_Rows, std::vector<int>(m_Cols, INT_MAX));
     std::vector<std::vector<Point>> previous(m_Rows, std::vector<Point>(m_Cols, {-1, -1}));
@@ -123,4 +131,8 @@ void Map::generateRandomPaths(Point start, Point end) {
     }
     setTile(start.x, start.y, Tile::PATH_CROSS);
     setTile(end.x, end.y, Tile::PATH_CROSS);
+}
+
+void Map::applyCenters(std::vector<Point> centers) {
+    for (const Point& point : centers) setTile(point.x, point.y, Tile::CITY);
 }
