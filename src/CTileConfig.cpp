@@ -19,10 +19,10 @@ bool CTileConfig::loadConfig(const std::string &path) {
     std::string line;
     ETile currentType = ETile::ERROR;
     std::string imagePath;
-    std::vector<ETile> top;
-    std::vector<ETile> right;
-    std::vector<ETile> bottom;
-    std::vector<ETile> left;
+    std::unordered_set<ETile> top;
+    std::unordered_set<ETile> right;
+    std::unordered_set<ETile> bottom;
+    std::unordered_set<ETile> left;
 
     while (std::getline(configFile, line)) {
         if (line.empty()) {
@@ -54,9 +54,8 @@ bool CTileConfig::loadConfig(const std::string &path) {
     }
 
     // Add the last tile configuration if it exists
-    if (currentType != ETile::ERROR) {
+    if (currentType != ETile::ERROR)
         m_TileConfigs[currentType] = CTile(currentType, imagePath, top, right, bottom, left);
-    }
 
     configFile.close();
     return true;
@@ -96,15 +95,15 @@ ETile CTileConfig::stringToETile(const std::string& str) {
     return ETile::ERROR;
 }
 
-std::vector<ETile> CTileConfig::stringToETileVector(const std::string& str) {
-    std::vector<ETile> result;
+std::unordered_set<ETile> CTileConfig::stringToETileVector(const std::string& str) {
+    std::unordered_set<ETile> result;
     std::istringstream iss(str);
     std::string token;
 
     while (iss >> token) {
         ETile tile = CTileConfig::stringToETile(token);
         if (tile != ETile::ERROR)
-            result.push_back(tile);
+            result.insert(tile);
     }
 
     return result;
