@@ -19,7 +19,10 @@ public:
     int y;
     double cost;
 
-    Point(const Point& other) = default;
+    /**
+     * @brief Default constructor.
+     */
+    Point() = default;
 
     /**
      * @brief Constructor to initialize point coordinates.
@@ -52,7 +55,14 @@ public:
     }
 };
 
-
-
+/**
+ * @struct hash<Point>
+ * @brief Specialization of std::hash for the Point class.
+ */
+template<> struct std::hash<Point> {
+    std::size_t operator()(const Point& point) const {
+        return point.hashValue();
+    }
+};
 
 #endif //SEMESTRAL_POINT_H

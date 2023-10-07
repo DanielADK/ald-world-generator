@@ -27,9 +27,3 @@ double Point::distanceTo(const Point& other) const {
     return x * 31 + y;
 }
 
-template<> struct std::hash<Point> {
-    std::size_t operator()(const Point& point) const {
-        return point.hashValue();
-    }
-};
-
