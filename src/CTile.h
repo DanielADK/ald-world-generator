@@ -42,14 +42,17 @@ public:
     CTile() = default;
     explicit CTile(const ETile& type);
     CTile(const ETile& type, std::string imagePath);
-    CTile(const ETile& type, std::string imagePath, const std::unordered_set<ETile>& possibleTilesTop,
-          const std::unordered_set<ETile>& possibleTilesRight, const std::unordered_set<ETile>& possibleTilesBottom,
-          const std::unordered_set<ETile>& possibleTilesLeft);
+    CTile(const ETile& type, std::string imagePath,
+         const std::unordered_set<ETile>& possibleTilesTop,
+         const std::unordered_set<ETile>& possibleTilesRight,
+         const std::unordered_set<ETile>& possibleTilesBottom,
+         const std::unordered_set<ETile>& possibleTilesLeft);
 
     bool isPossibleTop(ETile tile) const;
     bool isPossibleRight(ETile tile) const;
     bool isPossibleBottom(ETile tile) const;
     bool isPossibleLeft(ETile tile) const;
+    std::string getImagePath() const;
 };
 
 
