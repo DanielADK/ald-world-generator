@@ -21,7 +21,7 @@ public:
 
     static ETile stringToETile(const std::string& str);
     static std::unordered_set<ETile> stringToETileVector(const std::string& str);
-    static std::string trimWhitespace(std::string_view str);
+    static std::string trimWhitespace(std::string str);
 
     struct StringHash {
         std::size_t operator()(const std::string& str) const {
