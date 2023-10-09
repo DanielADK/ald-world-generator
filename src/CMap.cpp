@@ -64,6 +64,12 @@ void CMap::printMap() const {
                 case PATH_RIGHTLEFT:
                     std::cout << '-';
                     break;
+                case PATH_LEFTUP ... PATH_RIGHTDOWN:
+                    std::cout << '/';
+                    break;
+                case PATH_LEFTDOWN ... PATH_RIGHTUP:
+                    std::cout << '\\';
+                    break;
                 case CITY:
                     std::cout << 'C';
                     break;
