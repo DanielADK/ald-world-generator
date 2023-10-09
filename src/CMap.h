@@ -2,8 +2,8 @@
 // Created by daniel on 1.10.23.
 //
 
-#ifndef SEMESTRAL_MAP_H
-#define SEMESTRAL_MAP_H
+#ifndef SEMESTRAL_CMAP_H
+#define SEMESTRAL_CMAP_H
 
 #include <vector>
 #include <iostream>
@@ -11,14 +11,14 @@
 #include "CTile.h"
 #include "Point.h"
 
-class Map {
+class CMap {
 private:
     std::vector<std::vector<ETile>> m_Grid;
     int m_Rows;
     int m_Cols;
 
 public:
-    Map(int rows, int cols, ETile defaultTile = ETile::UNDEFINED);
+    CMap(int rows, int cols, ETile defaultTile = ETile::UNDEFINED);
     int getRows() const;
     int getCols() const;
     void setTile(int x, int y, const ETile tile);
@@ -30,4 +30,4 @@ public:
     void printMap() const;
 };
 
-#endif //SEMESTRAL_MAP_H
+#endif //SEMESTRAL_CMAP_H

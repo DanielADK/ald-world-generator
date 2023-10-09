@@ -2,34 +2,34 @@
 #include <unordered_map>
 #include <map>
 #include <set>
-#include "Map.h"
+#include "CMap.h"
 #include "Point.h"
 
-Map::Map(int rows, int cols, ETile defaultTile) : m_Rows(rows), m_Cols(cols) {
+CMap::CMap(int rows, int cols, ETile defaultTile) : m_Rows(rows), m_Cols(cols) {
     m_Grid.resize(rows, std::vector<ETile>(cols, defaultTile));
 }
 
-void Map::setTile(int x, int y, ETile tile) {
+void CMap::setTile(int x, int y, ETile tile) {
     if (x >= 0 && x < m_Rows && y >= 0 && y < m_Cols) m_Grid[x][y] = tile;
 }
 
-void Map::setTile(const Point& point, const ETile tile) {
+void CMap::setTile(const Point& point, const ETile tile) {
     setTile(point.getX(), point.getY(), tile);
 }
 
-ETile Map::getTile(int x, int y) const {
+ETile CMap::getTile(int x, int y) const {
     return (x >= 0 && x < m_Rows && y >= 0 && y < m_Cols) ? m_Grid[x][y] : ETile::ERROR;
 }
 
-ETile Map::getTile(const Point& point) const {
+ETile CMap::getTile(const Point& point) const {
     return getTile(point.getX(), point.getY());
 }
 
-int Map::getRows() const { return m_Rows; }
-int Map::getCols() const { return m_Cols; }
+int CMap::getRows() const { return m_Rows; }
+int CMap::getCols() const { return m_Cols; }
 
 
-void Map::printMap() const {
+void CMap::printMap() const {
     using enum ETile;
     for (const std::vector<ETile>& row : m_Grid) {
         for (const ETile& tile : row) {
