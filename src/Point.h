@@ -25,6 +25,9 @@ public:
      */
     Point(int x, int y);
 
+    int getX() const;
+    int getY() const;
+
     /**
      * @brief Calculates the Euclidean distance to another point.
      * @param other The other point.
