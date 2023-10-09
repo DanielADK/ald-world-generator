@@ -68,31 +68,37 @@ CTile CTileConfig::getTileConfig(ETile tileType) const {
     return CTile(ETile::ERROR);
 }
 
+std::unordered_map<ETile, CTile> CTileConfig::getAllTileConfigs() const {
+    return m_TileConfigs;
+}
+
+
 ETile CTileConfig::stringToETile(const std::string& str) {
+    using enum ETile;
     std::string trimmed = trimWhitespace(str);
-    static const std::unordered_map<std::string, ETile> map = {
-        {"GROUND", ETile::GROUND},
-        {"TREE", ETile::TREE},
-        {"GRASS", ETile::GRASS},
-        {"CITY", ETile::CITY},
-        {"CAT", ETile::CAT},
-        {"PATH_CROSS", ETile::PATH_CROSS},
-        {"PATH_UPDOWN", ETile::PATH_UPDOWN},
-        {"PATH_RIGHTLEFT", ETile::PATH_RIGHTLEFT},
-        {"PATH_ENDLEFT", ETile::PATH_ENDLEFT},
-        {"PATH_ENDUP", ETile::PATH_ENDUP},
-        {"PATH_ENDRIGHT", ETile::PATH_ENDRIGHT},
-        {"PATH_ENDDOWN", ETile::PATH_ENDDOWN},
-        {"PATH_LEFTDOWN", ETile::PATH_LEFTDOWN},
-        {"PATH_RIGHTDOWN", ETile::PATH_RIGHTDOWN},
-        {"PATH_LEFTUP", ETile::PATH_LEFTUP},
-        {"PATH_RIGHTUP", ETile::PATH_RIGHTUP}
+    static const std::unordered_map<std::string_view, ETile, StringHash, std::equal_to<>> map = {
+        {"GROUND", GROUND},
+        {"TREE", TREE},
+        {"GRASS", GRASS},
+        {"CITY", CITY},
+        {"CAT", CAT},
+        {"PATH_CROSS", PATH_CROSS},
+        {"PATH_UPDOWN", PATH_UPDOWN},
+        {"PATH_RIGHTLEFT", PATH_RIGHTLEFT},
+        {"PATH_ENDLEFT", PATH_ENDLEFT},
+        {"PATH_ENDUP", PATH_ENDUP},
+        {"PATH_ENDRIGHT", PATH_ENDRIGHT},
+        {"PATH_ENDDOWN", PATH_ENDDOWN},
+        {"PATH_LEFTDOWN", PATH_LEFTDOWN},
+        {"PATH_RIGHTDOWN", PATH_RIGHTDOWN},
+        {"PATH_LEFTUP", PATH_LEFTUP},
+        {"PATH_RIGHTUP", PATH_RIGHTUP}
     };
 
     if (auto it = map.find(trimmed); it != map.end()) {
         return it->second;
     }
-    return ETile::ERROR;
+    throw std::invalid_argument("Invalid tile type: " + str);
 }
 
 std::unordered_set<ETile> CTileConfig::stringToETileVector(const std::string& str) {
