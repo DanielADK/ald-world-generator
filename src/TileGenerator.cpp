@@ -6,7 +6,7 @@
 
 #include <utility>
 #include "CMap.h"
-#include "Point.h"
+#include "CPoint.h"
 
 TileGenerator::TileGenerator(const CMap& map, const CTileConfig& config) : m_Generator(m_RandomDevice()), m_Map(map), m_Config(config) {}
 
@@ -36,10 +36,10 @@ bool TileGenerator::isValidPosition(int x, int y) const {
 
 ETile TileGenerator::selectTileBasedOnRules(int row, int col) {
     // Získání sousedních dlaždic
-    auto topPoint = Point(row - 1, col);
-    auto rightPoint = Point(row, col + 1);
-    auto bottomPoint = Point(row+1, col);
-    auto leftPoint = Point(row, col - 1);
+    auto topPoint = CPoint(row - 1, col);
+    auto rightPoint = CPoint(row, col + 1);
+    auto bottomPoint = CPoint(row+1, col);
+    auto leftPoint = CPoint(row, col - 1);
 
     // Vytvoření seznamu možných dlaždic na základě pravidel
     std::vector<ETile> possibleTiles;

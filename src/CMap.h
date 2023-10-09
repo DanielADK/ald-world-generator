@@ -9,7 +9,7 @@
 #include <iostream>
 #include <random>
 #include "CTile.h"
-#include "Point.h"
+#include "CPoint.h"
 
 class CMap {
 private:
@@ -22,9 +22,9 @@ public:
     int getRows() const;
     int getCols() const;
     void setTile(int x, int y, const ETile tile);
-    void setTile(const Point& point, ETile tile);
+    void setTile(const CPoint& point, ETile tile);
     [[nodiscard]] ETile getTile(int x, int y) const;
-    [[nodiscard]] ETile getTile(const Point& point) const;
+    [[nodiscard]] ETile getTile(const CPoint& point) const;
 
 
     void printMap() const;

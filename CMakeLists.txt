@@ -8,8 +8,8 @@ add_executable(semestral main.cpp
         src/CTile.h
         src/CMap.cpp
         src/CMap.h
-        src/Point.cpp
-        src/Point.h
+        src/CPoint.cpp
+        src/CPoint.h
         src/TileGenerator.cpp
         src/CTileConfig.h
         src/CTileConfig.cpp

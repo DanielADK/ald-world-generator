@@ -3,7 +3,7 @@
 #include <map>
 #include <set>
 #include "CMap.h"
-#include "Point.h"
+#include "CPoint.h"
 
 CMap::CMap(int rows, int cols, ETile defaultTile) : m_Rows(rows), m_Cols(cols) {
     m_Grid.resize(rows, std::vector<ETile>(cols, defaultTile));
@@ -13,7 +13,7 @@ void CMap::setTile(int x, int y, ETile tile) {
     if (x >= 0 && x < m_Rows && y >= 0 && y < m_Cols) m_Grid[x][y] = tile;
 }
 
-void CMap::setTile(const Point& point, const ETile tile) {
+void CMap::setTile(const CPoint& point, const ETile tile) {
     setTile(point.getX(), point.getY(), tile);
 }
 
@@ -21,7 +21,7 @@ ETile CMap::getTile(int x, int y) const {
     return (x >= 0 && x < m_Rows && y >= 0 && y < m_Cols) ? m_Grid[x][y] : ETile::ERROR;
 }
 
-ETile CMap::getTile(const Point& point) const {
+ETile CMap::getTile(const CPoint& point) const {
     return getTile(point.getX(), point.getY());
 }
 
