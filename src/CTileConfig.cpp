@@ -26,6 +26,20 @@ bool CTileConfig::loadConfig(const std::string &path) {
 
     while (std::getline(configFile, line)) {
         if (line.empty()) {
+
+            // Checking valid image paths
+            std::ifstream file(imagePath);
+            if (file.rdstate() != std::ios_base::goodbit) {
+                if (file.rdstate() & std::ios_base::badbit)
+                    throw std::invalid_argument("Kritická chyba I/O. " + imagePath);
+                if (file.rdstate() & std::ios_base::failbit)
+                    throw std::invalid_argument("Nekritická chyba I/O. " + imagePath);
+                if (file.rdstate() & std::ios_base::eofbit)
+                    throw std::invalid_argument("Konec souboru dosažen. " + imagePath);
+            }
+            file.close();
+
+
             if (currentType != ETile::ERROR) {
                 m_TileConfigs[currentType] = CTile(currentType, imagePath, top, right, bottom, left);
             }
@@ -41,7 +55,7 @@ bool CTileConfig::loadConfig(const std::string &path) {
         if (key == "name") {
             currentType = stringToETile(value);
         } else if (key == "image") {
-            imagePath = value;
+            imagePath = trimWhitespace(value);
         } else if (key == "top") {
             top = stringToETileVector(value);
         } else if (key == "right") {
@@ -92,7 +106,9 @@ ETile CTileConfig::stringToETile(const std::string& str) {
         {"PATH_LEFTDOWN", PATH_LEFTDOWN},
         {"PATH_RIGHTDOWN", PATH_RIGHTDOWN},
         {"PATH_LEFTUP", PATH_LEFTUP},
-        {"PATH_RIGHTUP", PATH_RIGHTUP}
+        {"PATH_RIGHTUP", PATH_RIGHTUP},
+        {"ERROR", ERROR},
+        {"UNDEFINED", UNDEFINED}
     };
 
     if (auto it = map.find(trimmed); it != map.end()) {
@@ -115,11 +131,8 @@ std::unordered_set<ETile> CTileConfig::stringToETileVector(const std::string& st
     return result;
 }
 
-std::string CTileConfig::trimWhitespace(std::string_view str) {
-    std::string trimmed;
-    std::ranges::copy_if(str.begin(), str.end(), std::back_inserter(trimmed), [](unsigned char c) {
-        return !std::isspace(c);
-    });
-    return trimmed;
+std::string CTileConfig::trimWhitespace(std::string str) {
+    std::erase(str, ' ');
+    return str;
 }
 
