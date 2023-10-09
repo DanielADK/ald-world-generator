@@ -17,10 +17,10 @@ private:
     std::random_device m_RandomDevice;
     std::mt19937 m_Generator;
 
-    CMap m_Map;
-    CTileConfig m_Config;
+    CMap* m_Map;
+    CTileConfig* m_Config;
 public:
-    explicit TileGenerator(const CMap &map, const CTileConfig& config);
+    explicit TileGenerator(CMap& map, CTileConfig& config);
     
     ETile selectTileBasedOnRules(int row, int col);
     bool isValidPosition(int row, int col, ETile newTile) const;

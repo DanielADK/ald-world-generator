@@ -8,19 +8,19 @@
 #include "CMap.h"
 #include "CPoint.h"
 
-TileGenerator::TileGenerator(const CMap& map, const CTileConfig& config) : m_Generator(m_RandomDevice()), m_Map(map), m_Config(config) {}
+TileGenerator::TileGenerator(CMap& map, CTileConfig& config) : m_Generator(m_RandomDevice()), m_Map(&map), m_Config(&config) {}
 
 bool TileGenerator::isValidPosition(int row, int col, ETile newTile) const {
     // Is out of bounds
-    if (row < 0 || row >= m_Map.getRows() || col < 0 || col >= m_Map.getCols())
+    if (row < 0 || row >= m_Map->getRows() || col < 0 || col >= m_Map->getCols())
         return false;
 
     // Get the existing tile at this position
-    ETile existingTile = m_Map.getTile(row, col);
+    ETile existingTile = m_Map->getTile(row, col);
 
     // Retrieve the tile configurations for both existing and new tiles
-    CTile existingTileConfig = m_Config.getTileConfig(existingTile);
-    CTile newTileConfig = m_Config.getTileConfig(newTile);
+    CTile existingTileConfig = m_Config->getTileConfig(existingTile);
+    CTile newTileConfig = m_Config->getTileConfig(newTile);
 
     // Check if the new tile can be placed next to the existing tile based on their configurations
     if (existingTileConfig.isPossibleRight(newTile) && newTileConfig.isPossibleLeft(existingTile)) {
@@ -31,7 +31,7 @@ bool TileGenerator::isValidPosition(int row, int col, ETile newTile) const {
 }
 
 bool TileGenerator::isValidPosition(int x, int y) const {
-    return isValidPosition(x, y, m_Map.getTile(x, y));
+    return isValidPosition(x, y, m_Map->getTile(x, y));
 }
 
 ETile TileGenerator::selectTileBasedOnRules(int row, int col) {
@@ -43,11 +43,11 @@ ETile TileGenerator::selectTileBasedOnRules(int row, int col) {
 
     // Vytvoření seznamu možných dlaždic na základě pravidel
     std::vector<ETile> possibleTiles;
-    for (const auto& [tileType, tileConfig] : m_Config.getAllTileConfigs()) {
-        if ((tileConfig.isPossibleTop(m_Map.getTile(topPoint))) &&
-            (tileConfig.isPossibleRight(m_Map.getTile(rightPoint))) &&
-            (tileConfig.isPossibleBottom(m_Map.getTile(bottomPoint))) &&
-            (tileConfig.isPossibleLeft(m_Map.getTile(leftPoint)))) {
+    for (const auto& [tileType, tileConfig] : m_Config->getAllTileConfigs()) {
+        if ((tileConfig.isPossibleTop(m_Map->getTile(topPoint))) &&
+            (tileConfig.isPossibleRight(m_Map->getTile(rightPoint))) &&
+            (tileConfig.isPossibleBottom(m_Map->getTile(bottomPoint))) &&
+            (tileConfig.isPossibleLeft(m_Map->getTile(leftPoint)))) {
             possibleTiles.push_back(tileType);
         }
     }
@@ -64,20 +64,18 @@ ETile TileGenerator::selectTileBasedOnRules(int row, int col) {
 
 void TileGenerator::generateTilesBFS() {
     std::queue<std::pair<int, int>> bfsQueue;
-    std::vector<std::vector<bool>> visited(m_Map.getRows(), std::vector<bool>(m_Map.getCols(), false));
+    std::vector<std::vector<bool>> visited(m_Map->getRows(), std::vector<bool>(m_Map->getCols(), false));
 
-    int startRow = m_Map.getRows() / 2;
-    int startCol = m_Map.getCols() / 2;
+    int startRow = m_Map->getRows() / 2;
+    int startCol = m_Map->getCols() / 2;
 
     bfsQueue.emplace(startRow, startCol);
-    m_Map.setTile(startRow, startCol, ETile::PATH_CROSS);
+    m_Map->setTile(startRow, startCol, ETile::PATH_CROSS);
     visited[startRow][startCol] = true;
 
     std::vector<std::pair<int, int>> neighbors = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
 
     while (!bfsQueue.empty()) {
-        m_Map.printMap();
-        std::cout << std::endl;
 
         auto [row, col] = bfsQueue.front();
         bfsQueue.pop();
@@ -89,7 +87,7 @@ void TileGenerator::generateTilesBFS() {
             if (isValidPosition(newRow, newCol) && !visited[newRow][newCol]) {
                 ETile selectedTile = selectTileBasedOnRules(newRow, newCol);
                 if (selectedTile != ETile::ERROR) {
-                    m_Map.setTile(newRow, newCol, selectedTile);
+                    m_Map->setTile(newRow, newCol, selectedTile);
                     visited[newRow][newCol] = true;
                     bfsQueue.emplace(newRow, newCol);
                 }
