@@ -6,8 +6,8 @@ set(CMAKE_CXX_STANDARD 20)
 
 add_executable(semestral main.cpp
         src/CTile.h
-        src/Map.cpp
-        src/Map.h
+        src/CMap.cpp
+        src/CMap.h
         src/Point.cpp
         src/Point.h
         src/TileGenerator.cpp
