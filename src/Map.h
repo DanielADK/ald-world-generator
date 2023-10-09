@@ -9,17 +9,23 @@
 #include <iostream>
 #include <random>
 #include "CTile.h"
+#include "Point.h"
 
 class Map {
 private:
-    std::vector<std::vector<CTile>> m_Grid;
+    std::vector<std::vector<ETile>> m_Grid;
     int m_Rows;
     int m_Cols;
 
 public:
-    Map(int rows, int cols, CTile defaultTile = CTile(ETile::GROUND, "data/img/ground.png"));
-    void setTile(int x, int y, CTile& tile);
-    CTile getTile(int x, int y) const;
+    Map(int rows, int cols, ETile defaultTile = ETile::UNDEFINED);
+    int getRows() const;
+    int getCols() const;
+    void setTile(int x, int y, const ETile tile);
+    void setTile(const Point& point, ETile tile);
+    [[nodiscard]] ETile getTile(int x, int y) const;
+    [[nodiscard]] ETile getTile(const Point& point) const;
+
 
     void printMap() const;
 };
