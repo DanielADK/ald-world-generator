@@ -76,7 +76,7 @@ std::unordered_map<ETile, CTile> CTileConfig::getAllTileConfigs() const {
 
 void CTileConfig::printLoadedTiles() const {
     std::cout << "Načtené dlaždice:\n";
-    for (const [enum_type, tile] : m_TileConfigs)
+    for (const auto& [enum_type, tile] : m_TileConfigs)
         std::cout << "  " << tile.getImagePath() << std::endl;
 }
 
