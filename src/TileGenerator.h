@@ -26,6 +26,7 @@ public:
     bool isValidPosition(int row, int col, ETile newTile) const;
     bool isValidPosition(int row, int col) const;
     void generateTilesBFS();
+    void generateTilesSequentially();
 };
 
 

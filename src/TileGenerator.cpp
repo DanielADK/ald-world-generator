@@ -7,6 +7,7 @@
 #include <utility>
 #include "CMap.h"
 #include "CPoint.h"
+#include "CImageConnector.h"
 
 TileGenerator::TileGenerator(CMap& map, CTileConfig& config) : m_Generator(m_RandomDevice()), m_Map(&map), m_Config(&config) {}
 
@@ -75,6 +76,7 @@ void TileGenerator::generateTilesBFS() {
 
     std::vector<std::pair<int, int>> neighbors = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
 
+    CImageConnector ic;
     while (!bfsQueue.empty()) {
 
         auto [row, col] = bfsQueue.front();
@@ -84,16 +86,42 @@ void TileGenerator::generateTilesBFS() {
             int newRow = row + dx;
             int newCol = col + dy;
 
-            if (isValidPosition(newRow, newCol) && !visited[newRow][newCol]) {
+            if (isValidPosition(newRow, newCol) && (!visited[newRow][newCol] || m_Map->getTile(newRow, newCol) == ETile::UNDEFINED)) {
                 ETile selectedTile = selectTileBasedOnRules(newRow, newCol);
                 if (selectedTile != ETile::ERROR) {
                     m_Map->setTile(newRow, newCol, selectedTile);
                     visited[newRow][newCol] = true;
                     bfsQueue.emplace(newRow, newCol);
+
                 }
             }
         }
     }
 }
+
+void TileGenerator::generateTilesSequentially() {
+    int maxRow = m_Map->getRows();
+    int maxCol = m_Map->getCols();
+    std::vector<std::vector<bool>> visited(maxRow, std::vector<bool>(maxCol, false));
+
+    // Nastavit výchozí dlaždici
+    m_Map->setTile(0, 0, ETile::GROUND);
+    visited[0][0] = true;
+
+    CImageConnector ic;
+
+    for (int row = 0; row < maxRow; ++row) {
+        for (int col = 0; col < maxCol; ++col) {
+            if (!visited[row][col] || m_Map->getTile(row, col) == ETile::UNDEFINED) {
+                ETile selectedTile = selectTileBasedOnRules(row, col);
+                if (selectedTile != ETile::ERROR) {
+                    m_Map->setTile(row, col, selectedTile);
+                    visited[row][col] = true;
+                }
+            }
+        }
+    }
+}
+
 
 
