@@ -48,8 +48,11 @@ bool CTileConfig::loadConfig(const std::string &path) {
             left = stringToETileVector(value);
 
         if (line.empty()) {
-            if (currentType == ETile::ERROR || imagePath.empty() || symbol.empty())
-                std::cerr << "Neúspěšně načtená dlaždice: PATH:" << imagePath << " SYMBOL:" << symbol << " PŘESKAKUJI";
+            if (currentType == ETile::ERROR ||
+                    imagePath.empty() ||
+                    symbol.empty() ||
+                    !verifyPath(imagePath))
+                std::cerr << "Unsuccessful tile loading at:" << imagePath << " SYMBOL:" << symbol << " PŘESKAKUJI";
             else
                 m_TileConfigs.try_emplace(currentType, currentType, symbol, imagePath, top, right, bottom, left);
 
@@ -127,5 +130,19 @@ std::unordered_set<ETile> CTileConfig::stringToETileVector(const std::string& st
 std::string CTileConfig::trimWhitespace(std::string str) {
     std::erase(str, ' ');
     return str;
+}
+
+bool CTileConfig::verifyPath(const std::string& path) {
+    if (std::ifstream file(path); file.rdstate() == std::ios_base::goodbit)
+        return true;
+    else if (file.rdstate() & std::ios_base::badbit)
+        std::cerr << "Critical I/O error while verifying path: " << path << "\n";
+    else if (file.rdstate() & std::ios_base::failbit)
+        std::cerr << "Non-critical I/O error while verifying path: " << path << "\n";
+    else if (file.rdstate() & std::ios_base::eofbit)
+        std::cerr << "EOFBIT error. Corrupted file while verifying path: " << path << "\n";
+    else
+        std::cerr << "Undefined error while verifying path: " << path << "\n";
+    return false;
 }
 
