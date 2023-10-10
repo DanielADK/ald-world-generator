@@ -9,12 +9,16 @@ CTile::CTile(const ETile& type, std::string imagePath): m_Type(type), m_ImagePat
 
 }
 
-CTile::CTile(const ETile &type, std::string imagePath,
+CTile::CTile(const ETile &type,
+             std::string symbol,
+             std::string imagePath,
              std::unordered_set<ETile>& possibleTilesTop,
              std::unordered_set<ETile>& possibleTilesRight,
              std::unordered_set<ETile>& possibleTilesBottom,
              std::unordered_set<ETile>& possibleTilesLeft):
-             m_Type(type), m_ImagePath(std::move(imagePath)),
+                m_Type(type),
+                m_Symbol(std::move(symbol)),
+                m_ImagePath(std::move(imagePath)),
                 possibleTilesTop(std::move(possibleTilesTop)),
                 possibleTilesRight(std::move(possibleTilesRight)),
                 possibleTilesBottom(std::move(possibleTilesBottom)),
