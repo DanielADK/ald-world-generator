@@ -5,7 +5,8 @@
 #include "CMap.h"
 #include "CPoint.h"
 
-CMap::CMap(int rows, int cols, CTileConfig& tileConfig, ETile defaultTile) : m_Rows(rows), m_Cols(cols), m_Config(&tileConfig) {
+CMap::CMap(int rows, int cols, CTileConfig& tileConfig, ETile defaultTile) : m_Config(&tileConfig), m_Rows(rows),
+                                                                             m_Cols(cols) {
     m_Grid.resize(rows, std::vector<ETile>(cols, defaultTile));
 }
 
