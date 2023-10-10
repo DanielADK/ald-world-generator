@@ -63,6 +63,9 @@ bool CTileConfig::loadConfig(const std::string &path) {
 
     }
     file.close();
+
+    // Pick path tiles
+    m_PathTiles = filterPathTiles();
     return true;
 }
 
@@ -73,14 +76,27 @@ CTile CTileConfig::getTileConfig(ETile tileType) const {
     return CTile(ETile::ERROR);
 }
 
-std::unordered_map<ETile, CTile> CTileConfig::getAllTileConfigs() const {
+const std::unordered_map<ETile, CTile>& CTileConfig::getAllTileConfig() const {
     return m_TileConfigs;
+}
+
+const std::unordered_map<ETile, CTile>& CTileConfig::getPathTileConfig() const {
+    return m_PathTiles;
 }
 
 void CTileConfig::printLoadedTiles() const {
     std::cout << "Načtené dlaždice:\n";
     for (const auto& [enum_type, tile] : m_TileConfigs)
         std::cout << "  " << tile.getImagePath() << std::endl;
+}
+
+std::unordered_map<ETile, CTile> CTileConfig::filterPathTiles() const {
+std::unordered_map<ETile, CTile> result;
+    for (const auto& [enum_type, tile] : m_TileConfigs) {
+        if (tile.getImagePath().find("path") != std::string::npos)
+            result.try_emplace(enum_type, tile);
+    }
+    return result;
 }
 
 ETile CTileConfig::stringToETile(const std::string& str) {
