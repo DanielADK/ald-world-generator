@@ -17,6 +17,7 @@ public:
     bool loadConfig(const std::string& path);
     CTile getTileConfig(ETile tileType) const;
     std::unordered_map<ETile, CTile> getAllTileConfigs() const;
+    void printLoadedTiles() const;
 
 
     static ETile stringToETile(const std::string& str);
