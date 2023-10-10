@@ -10,68 +10,56 @@
 #include "CTileConfig.h"
 
 bool CTileConfig::loadConfig(const std::string &path) {
-    std::ifstream configFile(path);
-    if (!configFile.is_open()) {
-        std::cerr << "Could not open config file: " << path << std::endl;
-        return false;
-    }
+    std::ifstream file(path);
 
-    std::string line;
+    // Is file available?
+    if (!file.is_open())
+        throw std::invalid_argument("Can't open config file at: " + path);
+
     ETile currentType = ETile::ERROR;
     std::string imagePath;
     std::unordered_set<ETile> top;
-    std::unordered_set<ETile> right;
+    std::unordered_set<ETile>right;
     std::unordered_set<ETile> bottom;
     std::unordered_set<ETile> left;
 
-    while (std::getline(configFile, line)) {
-        if (line.empty()) {
-
-            // Checking valid image paths
-            std::ifstream file(imagePath);
-            if (file.rdstate() != std::ios_base::goodbit) {
-                if (file.rdstate() & std::ios_base::badbit)
-                    throw std::invalid_argument("Kritická chyba I/O. " + imagePath);
-                if (file.rdstate() & std::ios_base::failbit)
-                    throw std::invalid_argument("Nekritická chyba I/O. " + imagePath);
-                if (file.rdstate() & std::ios_base::eofbit)
-                    throw std::invalid_argument("Konec souboru dosažen. " + imagePath);
-            }
-            file.close();
-
-
-            if (currentType != ETile::ERROR) {
-                m_TileConfigs[currentType] = CTile(currentType, imagePath, top, right, bottom, left);
-            }
-            continue;
-        }
-
+    std::string line;
+    std::string symbol;
+    while (std::getline(file, line)) {
         std::istringstream iss(line);
         std::string key;
         std::string value;
         std::getline(iss, key, ':');
         std::getline(iss, value);
 
-        if (key == "name") {
+        if (key == "name")
             currentType = stringToETile(value);
-        } else if (key == "image") {
+        else if (key == "symbol")
+            symbol = trimWhitespace(value);
+        else if (key == "image")
             imagePath = trimWhitespace(value);
-        } else if (key == "top") {
+        else if (key == "top")
             top = stringToETileVector(value);
-        } else if (key == "right") {
+        else if (key == "right")
             right = stringToETileVector(value);
-        } else if (key == "bottom") {
+        else if (key == "bottom")
             bottom = stringToETileVector(value);
-        } else if (key == "left") {
+        else if (key == "left")
             left = stringToETileVector(value);
+
+        if (line.empty()) {
+            if (currentType == ETile::ERROR || imagePath.empty() || symbol.empty())
+                std::cerr << "Neúspěšně načtená dlaždice: PATH:" << imagePath << " SYMBOL:" << symbol << " PŘESKAKUJI";
+            else
+                m_TileConfigs.try_emplace(currentType, currentType, symbol, imagePath, top, right, bottom, left);
+
+            currentType = ETile::ERROR;
+            imagePath = "";
+            symbol = "";
         }
+
     }
-
-    // Add the last tile configuration if it exists
-    if (currentType != ETile::ERROR)
-        m_TileConfigs[currentType] = CTile(currentType, imagePath, top, right, bottom, left);
-
-    configFile.close();
+    file.close();
     return true;
 }
 
