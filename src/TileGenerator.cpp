@@ -42,9 +42,9 @@ ETile TileGenerator::selectTileBasedOnRules(int row, int col) {
     auto bottomPoint = CPoint(row+1, col);
     auto leftPoint = CPoint(row, col - 1);
 
-    // Vytvoření seznamu možných dlaždic na základě pravidel
+    // Get all possible tiles
     std::vector<ETile> possibleTiles;
-    for (const auto& [tileType, tileConfig] : m_Config->getAllTileConfigs()) {
+    for (const auto& [tileType, tileConfig] : m_Config->getPathTileConfig()) {
         if ((tileConfig.isPossibleTop(m_Map->getTile(topPoint))) &&
             (tileConfig.isPossibleRight(m_Map->getTile(rightPoint))) &&
             (tileConfig.isPossibleBottom(m_Map->getTile(bottomPoint))) &&
@@ -53,8 +53,11 @@ ETile TileGenerator::selectTileBasedOnRules(int row, int col) {
         }
     }
 
-    // Náhodný výběr z možných dlaždic
+    // Random selection
     if (!possibleTiles.empty()) {
+        // Shortcut for only one possible tile
+        if (possibleTiles.size() == 1) return possibleTiles[0];
+
         std::uniform_int_distribution<int> distribution(0, possibleTiles.size() - 1);
         return possibleTiles[distribution(m_Generator)];
     }
