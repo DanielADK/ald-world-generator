@@ -10,15 +10,15 @@ CTile::CTile(const ETile& type, std::string imagePath): m_Type(type), m_ImagePat
 }
 
 CTile::CTile(const ETile &type, std::string imagePath,
-             const std::unordered_set<ETile>& possibleTilesTop,
-             const std::unordered_set<ETile>& possibleTilesRight,
-             const std::unordered_set<ETile>& possibleTilesBottom,
-             const std::unordered_set<ETile>& possibleTilesLeft):
+             std::unordered_set<ETile>& possibleTilesTop,
+             std::unordered_set<ETile>& possibleTilesRight,
+             std::unordered_set<ETile>& possibleTilesBottom,
+             std::unordered_set<ETile>& possibleTilesLeft):
              m_Type(type), m_ImagePath(std::move(imagePath)),
-                possibleTilesTop(possibleTilesTop),
-                possibleTilesRight(possibleTilesRight),
-                possibleTilesBottom(possibleTilesBottom),
-                possibleTilesLeft(possibleTilesLeft) {}
+                possibleTilesTop(std::move(possibleTilesTop)),
+                possibleTilesRight(std::move(possibleTilesRight)),
+                possibleTilesBottom(std::move(possibleTilesBottom)),
+                possibleTilesLeft(std::move(possibleTilesLeft)) {}
 
 bool CTile::isPossibleTop(ETile tile) const {
     return possibleTilesTop.contains(tile) || tile == ETile::UNDEFINED;

@@ -43,10 +43,10 @@ public:
     explicit CTile(const ETile& type);
     CTile(const ETile& type, std::string imagePath);
     CTile(const ETile& type, std::string imagePath,
-         const std::unordered_set<ETile>& possibleTilesTop,
-         const std::unordered_set<ETile>& possibleTilesRight,
-         const std::unordered_set<ETile>& possibleTilesBottom,
-         const std::unordered_set<ETile>& possibleTilesLeft);
+         std::unordered_set<ETile>& possibleTilesTop,
+         std::unordered_set<ETile>& possibleTilesRight,
+         std::unordered_set<ETile>& possibleTilesBottom,
+         std::unordered_set<ETile>& possibleTilesLeft);
 
     bool isPossibleTop(ETile tile) const;
     bool isPossibleRight(ETile tile) const;
