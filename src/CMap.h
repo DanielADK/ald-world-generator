@@ -10,15 +10,17 @@
 #include <random>
 #include "CTile.h"
 #include "CPoint.h"
+#include "CTileConfig.h"
 
 class CMap {
 private:
     std::vector<std::vector<ETile>> m_Grid;
+    CTileConfig* m_Config;
     int m_Rows;
     int m_Cols;
 
 public:
-    CMap(int rows, int cols, ETile defaultTile = ETile::UNDEFINED);
+    CMap(int rows, int cols, CTileConfig& tileConfig, ETile defaultTile = ETile::UNDEFINED);
     int getRows() const;
     int getCols() const;
     void setTile(int x, int y, const ETile tile);

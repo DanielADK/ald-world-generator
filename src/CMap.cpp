@@ -5,7 +5,7 @@
 #include "CMap.h"
 #include "CPoint.h"
 
-CMap::CMap(int rows, int cols, ETile defaultTile) : m_Rows(rows), m_Cols(cols) {
+CMap::CMap(int rows, int cols, CTileConfig& tileConfig, ETile defaultTile) : m_Rows(rows), m_Cols(cols), m_Config(&tileConfig) {
     m_Grid.resize(rows, std::vector<ETile>(cols, defaultTile));
 }
 
@@ -64,10 +64,12 @@ void CMap::printMap() const {
                 case PATH_RIGHTLEFT:
                     std::cout << '-';
                     break;
-                case PATH_LEFTUP ... PATH_RIGHTDOWN:
+                case PATH_LEFTUP:
+                case PATH_RIGHTDOWN:
                     std::cout << '/';
                     break;
-                case PATH_LEFTDOWN ... PATH_RIGHTUP:
+                case PATH_LEFTDOWN:
+                case PATH_RIGHTUP:
                     std::cout << '\\';
                     break;
                 case CITY:
