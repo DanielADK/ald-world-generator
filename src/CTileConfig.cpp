@@ -91,7 +91,7 @@ void CTileConfig::printLoadedTiles() const {
 }
 
 std::unordered_map<ETile, CTile> CTileConfig::filterPathTiles() const {
-std::unordered_map<ETile, CTile> result;
+    std::unordered_map<ETile, CTile> result;
     for (const auto& [enum_type, tile] : m_TileConfigs) {
         if (tile.getImagePath().find("path") != std::string::npos)
             result.try_emplace(enum_type, tile);
