@@ -28,6 +28,7 @@ public:
     [[nodiscard]] ETile getTile(int x, int y) const;
     [[nodiscard]] ETile getTile(const CPoint& point) const;
 
+    std::uint64_t gridHash() const;
 
     void printMap() const;
 };

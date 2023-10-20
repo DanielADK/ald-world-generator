@@ -11,7 +11,8 @@ CMap::CMap(int rows, int cols, CTileConfig& tileConfig, ETile defaultTile) : m_C
 }
 
 void CMap::setTile(int x, int y, ETile tile) {
-    if (x >= 0 && x < m_Rows && y >= 0 && y < m_Cols) m_Grid[x][y] = tile;
+    if (x >= 0 && x < m_Rows && y >= 0 && y < m_Cols)
+        m_Grid[x][y] = tile;
 }
 
 void CMap::setTile(const CPoint& point, const ETile tile) {
@@ -19,7 +20,7 @@ void CMap::setTile(const CPoint& point, const ETile tile) {
 }
 
 ETile CMap::getTile(int x, int y) const {
-    return (x >= 0 && x < m_Rows && y >= 0 && y < m_Cols) ? m_Grid[x][y] : ETile::ERROR;
+    return (x >= 0 && x < m_Rows && y >= 0 && y < m_Cols) ? m_Grid[x][y] : ETile::UNDEFINED;
 }
 
 ETile CMap::getTile(const CPoint& point) const {
@@ -29,6 +30,16 @@ ETile CMap::getTile(const CPoint& point) const {
 int CMap::getRows() const { return m_Rows; }
 int CMap::getCols() const { return m_Cols; }
 
+std::uint64_t CMap::gridHash() const {
+    std::uint64_t hashValue = 0;
+    for (const auto& row : m_Grid)
+        for (const auto& tile : row)
+            // Magic constant 0x9e3779b9 is the golden ratio and bit shifts are used to avoid collisions
+            // used with XOR to combine the hashes
+            hashValue ^= std::hash<int>{}(static_cast<int>(tile))  + 0x9e3779b9 + (hashValue << 6) + (hashValue >> 2);
+
+    return hashValue;
+}
 
 void CMap::printMap() const {
     using enum ETile;
