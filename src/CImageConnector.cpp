@@ -24,7 +24,7 @@ void CImageConnector::processMap(const CMap& map, const std::unordered_map<ETile
                 throw std::invalid_argument("Failed to load image: " + image_path);
 
             if (tileImage.rows != tileHeight || tileImage.cols != tileWidth)
-                throw std::invalid_argument("Neplatné rozměry obrázku: " + tileImages.at(tileType).getImagePath());
+                throw std::invalid_argument("Invalid image size: " + tileImages.at(tileType).getImagePath());
 
             // Copy the tile image to the result image
             tileImage.copyTo(result(cv::Rect(j * tileWidth, i * tileHeight, tileWidth, tileHeight)));
