@@ -2,8 +2,8 @@
 // Created by daniel on 7.10.23.
 //
 
-#ifndef SEMESTRAL_TILEGENERATOR_H
-#define SEMESTRAL_TILEGENERATOR_H
+#ifndef SEMESTRAL_CTILEGENERATOR_H
+#define SEMESTRAL_CTILEGENERATOR_H
 
 #include <random>
 #include <unordered_map>
@@ -13,7 +13,7 @@
 #include "CMap.h"
 #include "CImageConnector.h"
 
-class TileGenerator {
+class CTileGenerator {
 private:
     std::random_device m_RandomDevice;
     std::mt19937 m_Generator;
@@ -23,7 +23,7 @@ private:
     int img_num = 0;
     CImageConnector ic = CImageConnector();
 public:
-    explicit TileGenerator(CMap& map, CTileConfig& config);
+    explicit CTileGenerator(CMap& map, CTileConfig& config);
     
     bool isValidPosition(int row, int col, ETile newTile) const;
     bool isValidPosition(int row, int col) const;
@@ -37,4 +37,4 @@ public:
 };
 
 
-#endif //SEMESTRAL_TILEGENERATOR_H
+#endif //SEMESTRAL_CTILEGENERATOR_H

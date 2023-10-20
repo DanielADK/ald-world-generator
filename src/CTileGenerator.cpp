@@ -2,7 +2,7 @@
 // Created by daniel on 7.10.23.
 //
 
-#include "TileGenerator.h"
+#include "CTileGenerator.h"
 
 #include <utility>
 #include <stack>
@@ -10,10 +10,10 @@
 #include "CPoint.h"
 #include "CImageConnector.h"
 
-TileGenerator::TileGenerator(CMap& map, CTileConfig& config) : m_Generator(m_RandomDevice()), m_Map(&map), m_Config(&config) {
+CTileGenerator::CTileGenerator(CMap& map, CTileConfig& config) : m_Generator(m_RandomDevice()), m_Map(&map), m_Config(&config) {
 }
 
-bool TileGenerator::isValidPosition(int row, int col, ETile newTile) const {
+bool CTileGenerator::isValidPosition(int row, int col, ETile newTile) const {
     // Check for corner tiles
     if ((row == 0 && col == 0) ||
         (row == 0 && col == m_Map->getCols() - 1) ||
@@ -44,11 +44,11 @@ bool TileGenerator::isValidPosition(int row, int col, ETile newTile) const {
     return false;
 }
 
-bool TileGenerator::isValidPosition(int x, int y) const {
+bool CTileGenerator::isValidPosition(int x, int y) const {
     return isValidPosition(x, y, m_Map->getTile(x, y));
 }
 
-std::vector<ETile> TileGenerator::generatePossibleTiles(int row, int col) const {
+std::vector<ETile> CTileGenerator::generatePossibleTiles(int row, int col) const {
     std::vector<ETile> possibleTiles;
     auto topPoint = CPoint(row - 1, col);
     auto rightPoint = CPoint(row, col + 1);
@@ -67,7 +67,7 @@ std::vector<ETile> TileGenerator::generatePossibleTiles(int row, int col) const 
     return possibleTiles;
 }
 
-ETile TileGenerator::selectRandomTile(const std::vector<ETile>& possibleTiles) {
+ETile CTileGenerator::selectRandomTile(const std::vector<ETile>& possibleTiles) {
     if (possibleTiles.empty()) return ETile::ERROR;
 
     // Shortcut for only one possible tile
@@ -77,12 +77,12 @@ ETile TileGenerator::selectRandomTile(const std::vector<ETile>& possibleTiles) {
     return possibleTiles[distribution(m_Generator)];
 }
 
-ETile TileGenerator::selectTileBasedOnRules(int row, int col) {
+ETile CTileGenerator::selectTileBasedOnRules(int row, int col) {
     std::vector<ETile> possibleTiles = generatePossibleTiles(row, col);
     return selectRandomTile(possibleTiles);
 }
 
-void TileGenerator::generateTilesBFS() {
+void CTileGenerator::generateTilesBFS() {
     std::queue<std::pair<int, int>> bfsQueue;
     std::vector<std::vector<bool>> visited(m_Map->getRows(), std::vector<bool>(m_Map->getCols(), false));
 
@@ -118,7 +118,7 @@ void TileGenerator::generateTilesBFS() {
 }
 
 
-void TileGenerator::generateTilesSequentially() {
+void CTileGenerator::generateTilesSequentially() {
     int maxRow = m_Map->getRows();
     int maxCol = m_Map->getCols();
     std::vector<std::vector<bool>> visited(maxRow, std::vector<bool>(maxCol, false));
@@ -142,7 +142,7 @@ void TileGenerator::generateTilesSequentially() {
     }
 }
 
-void TileGenerator::generateTilesDFS() {
+void CTileGenerator::generateTilesDFS() {
     std::stack<std::pair<int, int>> dfsStack;
     std::vector<std::vector<bool>> visited(m_Map->getRows(), std::vector<bool>(m_Map->getCols(), false));
 
