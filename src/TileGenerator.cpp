@@ -86,37 +86,37 @@ void TileGenerator::generateTilesBFS() {
     std::queue<std::pair<int, int>> bfsQueue;
     std::vector<std::vector<bool>> visited(m_Map->getRows(), std::vector<bool>(m_Map->getCols(), false));
 
-    int startRow = m_Map->getRows() / 2;
-    int startCol = m_Map->getCols() / 2;
+    bfsQueue.emplace(0, 0);
+    visited[0][0] = true;
 
-    bfsQueue.emplace(startRow, startCol);
-    m_Map->setTile(startRow, startCol, ETile::PATH_CROSS);
-    visited[startRow][startCol] = true;
-
-    std::vector<std::pair<int, int>> neighbors = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
-
-    CImageConnector ic;
     while (!bfsQueue.empty()) {
-
         auto [row, col] = bfsQueue.front();
         bfsQueue.pop();
 
-        for (auto [dx, dy] : neighbors) {
-            int newRow = row + dx;
-            int newCol = col + dy;
+        if (m_Map->getTile(row, col) == ETile::UNDEFINED) {
+            std::queue<ETile> tileQueue;
+            std::vector<ETile> possibleTiles = generatePossibleTiles(row, col);
+            std::shuffle(possibleTiles.begin(), possibleTiles.end(), m_Generator);
+            for (const auto& tile : possibleTiles) tileQueue.push(tile);
 
-            if (isValidPosition(newRow, newCol) && (!visited[newRow][newCol] || m_Map->getTile(newRow, newCol) == ETile::UNDEFINED)) {
-                ETile selectedTile = selectTileBasedOnRules(newRow, newCol);
-                if (selectedTile != ETile::ERROR) {
-                    m_Map->setTile(newRow, newCol, selectedTile);
-                    visited[newRow][newCol] = true;
-                    bfsQueue.emplace(newRow, newCol);
+            if (!tileQueue.empty()) {
+                ETile selectedTile = tileQueue.front();
+                tileQueue.pop();
+                m_Map->setTile(row, col, selectedTile);
+            }
+        }
 
-                }
+        std::vector<std::pair<int, int>> directions = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+        for (auto [dx, dy] : directions) {
+            int newRow = row + dx, newCol = col + dy;
+            if (newRow >= 0 && newRow < m_Map->getRows() && newCol >= 0 && newCol < m_Map->getCols() && !visited[newRow][newCol]) {
+                bfsQueue.emplace(newRow, newCol);
+                visited[newRow][newCol] = true;
             }
         }
     }
 }
+
 
 void TileGenerator::generateTilesSequentially() {
     int maxRow = m_Map->getRows();
