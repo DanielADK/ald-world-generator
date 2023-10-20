@@ -22,9 +22,12 @@ private:
 public:
     explicit TileGenerator(CMap& map, CTileConfig& config);
     
-    ETile selectTileBasedOnRules(int row, int col);
     bool isValidPosition(int row, int col, ETile newTile) const;
     bool isValidPosition(int row, int col) const;
+    std::vector<ETile> generatePossibleTiles(int row, int col) const;
+    ETile selectRandomTile(const std::vector<ETile>& possibleTiles);
+    ETile selectTileBasedOnRules(int row, int col);
+
     void generateTilesBFS();
     void generateTilesSequentially();
 };
