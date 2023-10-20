@@ -117,40 +117,35 @@ void CTileGenerator::generateTilesBFS() {
     }
 }
 
-void CTileGenerator::generateTilesDFS() {
-    std::stack<std::pair<int, int>> dfsStack;
-    std::vector<std::vector<bool>> visited(m_Map->getRows(), std::vector<bool>(m_Map->getCols(), false));
-
-    dfsStack.emplace(0, 0);
-    visited[0][0] = true;
-
-    while (!dfsStack.empty()) {
-        auto [row, col] = dfsStack.top();
-        dfsStack.pop();
-
-        if (m_Map->getTile(row, col) == ETile::UNDEFINED) {
-            std::queue<ETile> tileQueue;
-            std::vector<ETile> possibleTiles = generatePossibleTiles(row, col);
-            std::shuffle(possibleTiles.begin(), possibleTiles.end(), m_Generator);
-            for (const auto& tile : possibleTiles) tileQueue.push(tile);
-
-            if (!tileQueue.empty()) {
-                ETile selectedTile = tileQueue.front();
-                tileQueue.pop();
-                m_Map->setTile(row, col, selectedTile);
-            }
-        }
-
-        std::vector<std::pair<int, int>> directions = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
-        for (auto [dx, dy] : directions) {
-            int newRow = row + dx, newCol = col + dy;
-            if (newRow >= 0 && newRow < m_Map->getRows() && newCol >= 0 && newCol < m_Map->getCols() && !visited[newRow][newCol]) {
-                dfsStack.emplace(newRow, newCol);
-                visited[newRow][newCol] = true;
-            }
-        }
+bool CTileGenerator::generateTilesDFS(const int& row, const int& col, std::vector<std::vector<bool>>& visited) {
+    if (row < 0 || row >= m_Map->getRows() || col < 0 || col >= m_Map->getCols()) {
+        return true;
     }
+
+    if (visited[row][col]) {
+        return true;
+    }
+
+    visited[row][col] = true;
+
+    std::vector<ETile> possibleTiles = generatePossibleTiles(row, col);
+    std::shuffle(possibleTiles.begin(), possibleTiles.end(), m_Generator);
+
+    for (const auto& tile : possibleTiles) {
+        m_Map->setTile(row, col, tile);
+
+        if (generateTilesDFS(row + 1, col, visited) &&
+            generateTilesDFS(row - 1, col, visited) &&
+            generateTilesDFS(row, col + 1, visited) &&
+            generateTilesDFS(row, col - 1, visited)) {
+            return true;
+        }
+
+        // Backtrack
+        m_Map->setTile(row, col, ETile::UNDEFINED);
+    }
+
+    visited[row][col] = false;
+    return false;
 }
-
-
 

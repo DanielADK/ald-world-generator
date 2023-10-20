@@ -31,7 +31,7 @@ public:
     ETile selectTileBasedOnRules(int row, int col);
 
     void generateTilesBFS();
-    void generateTilesDFS();
+    bool generateTilesDFS(const int& row, const int& col, std::vector<std::vector<bool>>& visited);
 };
 
 
