@@ -11,6 +11,7 @@
 #include <vector>
 #include "CTileConfig.h"
 #include "CMap.h"
+#include "CImageConnector.h"
 
 class TileGenerator {
 private:
@@ -19,6 +20,8 @@ private:
 
     CMap* m_Map;
     CTileConfig* m_Config;
+    int img_num = 0;
+    CImageConnector ic = CImageConnector();
 public:
     explicit TileGenerator(CMap& map, CTileConfig& config);
     
@@ -30,6 +33,7 @@ public:
 
     void generateTilesBFS();
     void generateTilesSequentially();
+    void generateTilesDFS();
 };
 
 

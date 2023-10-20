@@ -5,11 +5,13 @@
 #include "TileGenerator.h"
 
 #include <utility>
+#include <stack>
 #include "CMap.h"
 #include "CPoint.h"
 #include "CImageConnector.h"
 
-TileGenerator::TileGenerator(CMap& map, CTileConfig& config) : m_Generator(m_RandomDevice()), m_Map(&map), m_Config(&config) {}
+TileGenerator::TileGenerator(CMap& map, CTileConfig& config) : m_Generator(m_RandomDevice()), m_Map(&map), m_Config(&config) {
+}
 
 bool TileGenerator::isValidPosition(int row, int col, ETile newTile) const {
     // Check for corner tiles
@@ -41,7 +43,6 @@ bool TileGenerator::isValidPosition(int row, int col, ETile newTile) const {
 
     return false;
 }
-
 
 bool TileGenerator::isValidPosition(int x, int y) const {
     return isValidPosition(x, y, m_Map->getTile(x, y));
@@ -76,12 +77,10 @@ ETile TileGenerator::selectRandomTile(const std::vector<ETile>& possibleTiles) {
     return possibleTiles[distribution(m_Generator)];
 }
 
-
 ETile TileGenerator::selectTileBasedOnRules(int row, int col) {
     std::vector<ETile> possibleTiles = generatePossibleTiles(row, col);
     return selectRandomTile(possibleTiles);
 }
-
 
 void TileGenerator::generateTilesBFS() {
     std::queue<std::pair<int, int>> bfsQueue;
@@ -142,3 +141,41 @@ void TileGenerator::generateTilesSequentially() {
         }
     }
 }
+
+void TileGenerator::generateTilesDFS() {
+    std::stack<std::pair<int, int>> dfsStack;
+    std::vector<std::vector<bool>> visited(m_Map->getRows(), std::vector<bool>(m_Map->getCols(), false));
+
+    dfsStack.emplace(0, 0);
+    visited[0][0] = true;
+
+    while (!dfsStack.empty()) {
+        auto [row, col] = dfsStack.top();
+        dfsStack.pop();
+
+        if (m_Map->getTile(row, col) == ETile::UNDEFINED) {
+            std::queue<ETile> tileQueue;
+            std::vector<ETile> possibleTiles = generatePossibleTiles(row, col);
+            std::shuffle(possibleTiles.begin(), possibleTiles.end(), m_Generator);
+            for (const auto& tile : possibleTiles) tileQueue.push(tile);
+
+            if (!tileQueue.empty()) {
+                ETile selectedTile = tileQueue.front();
+                tileQueue.pop();
+                m_Map->setTile(row, col, selectedTile);
+            }
+        }
+
+        std::vector<std::pair<int, int>> directions = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+        for (auto [dx, dy] : directions) {
+            int newRow = row + dx, newCol = col + dy;
+            if (newRow >= 0 && newRow < m_Map->getRows() && newCol >= 0 && newCol < m_Map->getCols() && !visited[newRow][newCol]) {
+                dfsStack.emplace(newRow, newCol);
+                visited[newRow][newCol] = true;
+            }
+        }
+    }
+}
+
+
+
