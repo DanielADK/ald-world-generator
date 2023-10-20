@@ -20,19 +20,17 @@ private:
 
     CMap* m_Map;
     CTileConfig* m_Config;
-    int img_num = 0;
     CImageConnector ic = CImageConnector();
 public:
     explicit CTileGenerator(CMap& map, CTileConfig& config);
     
-    bool isValidPosition(int row, int col, ETile newTile) const;
-    bool isValidPosition(int row, int col) const;
-    std::vector<ETile> generatePossibleTiles(int row, int col) const;
+    [[nodiscard]] bool isValidPosition(int row, int col, ETile newTile) const;
+    [[nodiscard]] bool isValidPosition(int row, int col) const;
+    [[nodiscard]] std::vector<ETile> generatePossibleTiles(int row, int col) const;
     ETile selectRandomTile(const std::vector<ETile>& possibleTiles);
     ETile selectTileBasedOnRules(int row, int col);
 
     void generateTilesBFS();
-    void generateTilesSequentially();
     void generateTilesDFS();
 };
 

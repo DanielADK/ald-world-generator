@@ -117,31 +117,6 @@ void CTileGenerator::generateTilesBFS() {
     }
 }
 
-
-void CTileGenerator::generateTilesSequentially() {
-    int maxRow = m_Map->getRows();
-    int maxCol = m_Map->getCols();
-    std::vector<std::vector<bool>> visited(maxRow, std::vector<bool>(maxCol, false));
-
-    // Nastavit výchozí dlaždici
-    m_Map->setTile(0, 0, ETile::GROUND);
-    visited[0][0] = true;
-
-    CImageConnector ic;
-
-    for (int row = 0; row < maxRow; ++row) {
-        for (int col = 0; col < maxCol; ++col) {
-            if (!visited[row][col] || m_Map->getTile(row, col) == ETile::UNDEFINED) {
-                ETile selectedTile = selectTileBasedOnRules(row, col);
-                if (selectedTile != ETile::ERROR) {
-                    m_Map->setTile(row, col, selectedTile);
-                    visited[row][col] = true;
-                }
-            }
-        }
-    }
-}
-
 void CTileGenerator::generateTilesDFS() {
     std::stack<std::pair<int, int>> dfsStack;
     std::vector<std::vector<bool>> visited(m_Map->getRows(), std::vector<bool>(m_Map->getCols(), false));
